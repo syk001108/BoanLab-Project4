@@ -68,7 +68,12 @@ def extract_data(soup):
             sample_input_data(soup)
             sample_output_data(soup)
 
-for i in range(1, 19):
+target_url = 'https://www.algospot.com/judge/problem/list/1'
+soup = get_soup(target_url)
+span = soup.find('span', {'class': 'step-links'})
+a1 = span.find_all('a')
+pg_num = int(a1[6].text.strip())+1
+for i in range(1, pg_num):
     target_url = 'https://www.algospot.com/judge/problem/list/{}?order_by=slug'.format(i)
     time.sleep(random.uniform(2,4))
     soup = get_soup(target_url)
