@@ -19,14 +19,12 @@ def info_data(soup):
     ID = lis[0].text.strip()
     time = lis[1].text.strip()
     memory = lis[2].text.strip()
-    submissions = lis[3].text.strip()
-    accepted = lis[4].text.strip()
     li1 = soup.find('a', {'class': 'username'})
     author = li1.text.strip()
     li2 = lic.find('li', {'class': 'source'})
     li2s = li2.find('a')
     source = li2s.text.strip()
-    print(ID, name, time, memory, submissions, accepted, author, source)
+    print(ID, name, time, memory, author, source)
 
 def problem_data(soup):
     section = soup.find('section', {'class': 'problem_sample_input'})
