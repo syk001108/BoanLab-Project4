@@ -1,3 +1,4 @@
+#CSV파일 저장 없는 버전
 from bs4 import BeautifulSoup
 import urllib.request
 import time
@@ -14,9 +15,12 @@ def get_soup(target_url):
 def remove_html(sentence):
     sentence.find('h4').decompose()
     p = sentence.find_all('span')
+    img = sentence.find_all('img')
     sentence = str(sentence)
     for i in p:
         sentence = sentence.replace(str(i), '')
+    for png in img:
+        sentence = sentence.replace(str(png), "https://www.algospot.com" + png['src'])
     sentence = sentence.replace('<sup>', '^{')
     sentence = sentence.replace('</sup>', '}')
     sentence = sentence.replace('<sub>', '_{')
