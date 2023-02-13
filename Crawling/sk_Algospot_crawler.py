@@ -1,4 +1,3 @@
-#CSV파일 저장 없는 버전
 from bs4 import BeautifulSoup
 import urllib.request
 import time
@@ -46,66 +45,73 @@ def remove_html(sentence):
 def info_data(soup):
     head = soup.find('div', {'class': 'article-container'})
     head2 = head.find('h2')
-    name = head2.text.strip()
+    list.append(head2.text.strip())
     lic = soup.find('li', {'class': 'content'})
     lis = lic.find_all('li')
-    ID = lis[0].text.strip()
-    time = lis[1].text.strip()
-    memory = lis[2].text.strip()
+    list.append(lis[0].text.strip())
+    list.append(lis[1].text.strip())
+    list.append(lis[2].text.strip())
     li1 = soup.find('a', {'class': 'username'})
-    author = li1.text.strip()
-    return(ID, name, time, memory, author)
+    list.append(li1.text.strip())
 
 def problem_data(soup):
     section = soup.find('section', {'class': 'problem_statement'})
     section = remove_html(section)
-    return section
+    list.append(section)
 
 def input_data(soup):
     section = soup.find('section', {'class': 'problem_input'})
     section = remove_html(section)
-    return section
+    list.append(section)
 
 def output_data(soup):
     section = soup.find('section', {'class': 'problem_output'})
     section = remove_html(section)
-    return section
+    list.append(section)
 
 def sample_input_data(soup):
     section = soup.find('section', {'class': 'problem_sample_input'})
     pres = section.find_all('pre')
     input_d = pres[0].text.strip()
-    return input_d
+    list.append(input_d)
 
 def sample_output_data(soup):
     section = soup.find('section', {'class': 'problem_sample_output'})
     pres = section.find_all('pre')
     output_d = pres[0].text.strip()
-    return output_d
+    list.append(output_d)
 
 def extract_data(soup):
     table = soup.find('table', {'class': 'problem_list'})
     trs = table.find_all('tr')
     for idx, tr in enumerate(trs):
+        global list
+        list = []
         if idx > 0:
             tds = tr.find_all('td')
             target_url = 'https://www.algospot.com/judge/problem/read/'+tds[1].text.strip()
             time.sleep(random.uniform(2,4))
             soup = get_soup(target_url)
-            info = info_data(soup)
-            problem = problem_data(soup)
-            input_d = input_data(soup)
-            output_d = output_data(soup)
-            sam_in_d = sample_input_data(soup)
-            sam_out_d = sample_output_data(soup)
+            info_data(soup)
+            problem_data(soup)
+            input_data(soup)
+            output_data(soup)
+            sample_input_data(soup)
+            sample_output_data(soup)
+            print (list)
+            writer.writerow(list)
 
 target_url = 'https://www.algospot.com/judge/problem/list/1'
 soup = get_soup(target_url)
 span = soup.find('span', {'class': 'step-links'})
 a1 = span.find_all('a')
 pg_num = int(a1[6].text.strip())+1
+f = open('algo.csv','w',newline='\n')
+writer = csv.writer(f)
+writer.writerow(['NAME', 'ID', 'TIME', 'MEMORY', 'AUTHOR', 'PROBLEM', 'INPUT', 'OUTPUT', 'SAMPLE INPUT', 'SAMPLE OUTPUT'])
 for i in range(1, pg_num):
     target_url = 'https://www.algospot.com/judge/problem/list/{}?order_by=slug'.format(i)
     time.sleep(random.uniform(2,4))
     soup = get_soup(target_url)
     extract_data(soup)
+f.close
