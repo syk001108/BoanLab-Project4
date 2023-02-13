@@ -15,11 +15,16 @@ def remove_html(sentence):
     sentence.find('h4').decompose()
     p = sentence.find_all('span')
     img = sentence.find_all('img')
+    link = sentence.find_all('a')
     sentence = str(sentence)
     for i in p:
         sentence = sentence.replace(str(i), '')
     for png in img:
         sentence = sentence.replace(str(png), "https://www.algospot.com" + png['src'])
+    h = re.sub('(<([^>]+)>)', '', sentence)
+    h = h.strip()
+    for li in link:
+        sentence = sentence.replace(str(li), li.attrs['href']+'\n'+h)
     sentence = sentence.replace('<sup>', '^{')
     sentence = sentence.replace('</sup>', '}')
     sentence = sentence.replace('<sub>', '_{')
@@ -39,6 +44,7 @@ def remove_html(sentence):
     sentence = sentence.replace('&amp;', '&')
     sentence = sentence.replace('&quot;', '"')
     sentence = sentence.replace('&num;', '#')
+    sentence = sentence.replace('\sqrt', '√')
     sentence = sentence.strip()
     return sentence
 
